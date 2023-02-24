@@ -1,15 +1,10 @@
-# 🚀 Welcome to your new awesome project!
+# To-Do List
 
-This project has been created using **webpack-cli**, you can now run
+A simple to-do page
 
-```
-npm run build
-```
-
-or
-
-```
-yarn build
-```
-
-to bundle your application
+## Built using
+---
+- HTML
+- Vanilla JavaScript
+- CSS
+- Webpack
