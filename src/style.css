@@ -1,0 +1,203 @@
+@font-face {
+    font-family: 'Inter medium';
+    src: url('./Inter-Medium.woff');
+}
+
+* {
+    padding: 0;
+    margin: 0;
+
+    font-family: 'Inter medium';
+}
+
+:root {
+    --primaryColor:#d65e78;
+    --lightColor:#ff8fa7;
+    --darkColor:#a12d4c;
+}
+
+body {
+    display:grid;
+    height: 100vh;
+    grid-template-rows: auto 1fr auto;
+    grid-template-columns: max(6em,15%) auto;
+}
+
+.sidebar input {
+    /* z-index: 1; */
+}
+
+.modalBg {
+    /* display: flex; */
+    display: none;
+    background-color: rgba(0,0,0,.6);
+    position:absolute;
+    z-index: 3;
+    
+    height: 100vh;
+    height: 100dvh;
+    width: 100vw;
+    width: 100dvw;
+
+}
+
+.modalContainer {
+    /* display: none; */
+    /* z-index: 4; */
+    background-color: white;
+
+    padding: 3em;
+}
+
+.addTaskModal {
+    display: flex;
+    width: 20%;
+    height: 25%;
+}
+
+.editTaskModal {
+    
+}
+
+.headerContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-column: 1/-1;
+
+    background-color: var(--darkColor);
+}
+
+.header {
+    grid-column: 2;
+
+    color:white;
+    font-size: 3rem;
+    text-align: center;
+
+    min-width: 150px;
+    padding: .5em 0;
+}
+
+.sidebarContainer {
+    background-color: var(--lightColor);
+}
+
+.sidebarHeader {
+    background-color: var(--primaryColor);
+    font-size: 1.2rem;
+    text-align: center;
+    padding: .5em 0;
+}
+
+.sidebar {
+    background-color: var(--lightColor);
+
+    text-align: center;
+}
+
+.sidebar li {
+    padding: .75em;
+}
+
+.sidebarItemContainer {
+    display: flex;
+    align-items: center;
+    gap: .25em;
+
+    text-align: left;
+    position: relative;
+}
+
+.sidebarItemContainer div:first-child{
+    max-width: max(80px,85%);
+    word-wrap: break-word;
+}
+
+.listNameContainer {
+    display: flex;
+    align-items: center;
+    gap: .25em;
+
+    position: absolute;
+    top:.3rem;
+    z-index: 2;
+}
+
+.listNameField {
+    max-width: 82%;
+}
+
+.sidebarItemContainer .buttonOverlay {
+    display: flex;
+
+    position: absolute;
+    right:5%;
+
+    visibility: hidden;
+    z-index: 1;
+}
+
+.sidebarItemContainer:hover .buttonOverlay {
+    visibility: visible;
+}
+
+.sidebar button {
+    width: 2em;
+    min-width: 2em;
+    height: 2em;
+}
+
+.sidebar .addListButton {
+    font-size: 1.2rem;
+    background-color: var(--primaryColor);
+    border: 0;
+    border-radius: .25em;
+    color:white;
+    height: 1.5em;
+    width: 5em;
+    margin-top: .7em;
+}
+
+.addListButton:hover {
+    border: 1px solid white;
+}
+
+.sidebar .editButton {
+    /* position: absolute; */
+}
+
+.sidebar .deleteButton {
+    /* position: absolute;
+    left: calc(100% - 2em); */
+    margin-left: .3em;
+}
+
+.contentContainer {
+    display:grid;
+    /* grid-template-rows: 3rem; */
+    grid-auto-rows: 2rem;
+}
+
+.content {
+    /* background-color: var(--primaryColor); */
+}
+
+.contentHeader {
+    display: flex;
+}
+
+.checklistContainer {
+    background-color: white;
+}
+
+.footerContainer {
+    grid-column: 1/-1;
+
+    text-align: center;
+
+    background-color: var(--darkColor);
+}
+
+.footer {
+    color:white;
+}
