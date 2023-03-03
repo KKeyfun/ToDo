@@ -3,7 +3,7 @@ function makeElement(type, className, content) {
   if (className) {
     if (typeof (className) === 'object') {
       className.forEach((el) => {
-        elem.classlist.add(el);
+        elem.classList.add(el);
       });
     } else { elem.classList.add(className); }
   }

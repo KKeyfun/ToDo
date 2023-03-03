@@ -1,8 +1,6 @@
 import makeElement from './makeElement';
 import append from './append';
-import { lists } from './listFunctions';
-
-const activeList = null;
+import { lists, activeList } from './listFunctions';
 
 function createTask(task, description, dueDate, priority) {
   const changeValue = (value, newValue) => {

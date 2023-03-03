@@ -8,6 +8,8 @@
     margin: 0;
 
     font-family: 'Inter medium';
+    list-style: none;
+    text-decoration: none;
 }
 
 :root {
@@ -23,15 +25,22 @@ body {
     grid-template-columns: max(6em,15%) auto;
 }
 
+.header {
+    text-align: center;
+    font-weight: 900;
+}
+
 .sidebar input {
     /* z-index: 1; */
 }
 
 .modalBg {
-    /* display: flex; */
     display: none;
+    /* display: flex; */
+    justify-content: center;
+    align-items: center;
     background-color: rgba(0,0,0,.6);
-    position:absolute;
+    position:fixed;
     z-index: 3;
     
     height: 100vh;
@@ -43,20 +52,57 @@ body {
 
 .modalContainer {
     /* display: none; */
-    /* z-index: 4; */
-    background-color: white;
-
-    padding: 3em;
-}
-
-.addTaskModal {
     display: flex;
-    width: 20%;
-    height: 25%;
+    background-color: white;
+    border-radius: 1em;
+    padding: 2em;
+    position: absolute;
 }
 
-.editTaskModal {
-    
+li input,li textarea{
+    width: 100%;
+}
+
+li:last-child {
+    margin: 0 auto;
+}
+
+li:last-child button {
+    padding: .25em .75em;
+    margin: .5em;
+}
+
+.newTaskHeader,.editTaskHeader {
+    font-size: 1.3rem;
+    /* padding: .25em 0; */
+}
+
+.addTaskModal,.editTaskModal {
+    display: none;
+}
+
+/* .newTaskCancelButton {
+    position: absolute;
+    top:1.5em;
+    right: 2em;
+    padding: .2em .5em;
+} */
+
+.modalCornerButton {
+    position: absolute;
+    top:1.5em;
+    right: 2em;
+    padding: .2em .5em;
+}
+
+.modalBg ul {
+    display: flex;
+    flex-direction: column;
+    gap:1em;
+}
+
+.listNameContainer, .addListButton{
+    margin: 0 auto;
 }
 
 .headerContainer {
@@ -67,7 +113,7 @@ body {
     background-color: var(--darkColor);
 }
 
-.header {
+.pageHeader {
     grid-column: 2;
 
     color:white;
@@ -85,13 +131,15 @@ body {
 .sidebarHeader {
     background-color: var(--primaryColor);
     font-size: 1.2rem;
-    text-align: center;
     padding: .5em 0;
 }
 
 .sidebar {
-    background-color: var(--lightColor);
+    display: flex;
+    flex-direction: column;
+    gap:.5em;
 
+    background-color: var(--lightColor);
     text-align: center;
 }
 
@@ -109,7 +157,7 @@ body {
 }
 
 .sidebarItemContainer div:first-child{
-    max-width: max(80px,85%);
+    max-width: max(80px,90%);
     word-wrap: break-word;
 }
 
@@ -124,7 +172,7 @@ body {
 }
 
 .listNameField {
-    max-width: 82%;
+    /* max-width: 82%; */
 }
 
 .sidebarItemContainer .buttonOverlay {
@@ -183,11 +231,30 @@ body {
 }
 
 .contentHeader {
-    display: flex;
+    /* display: flex; */
 }
 
 .checklistContainer {
     background-color: white;
+}
+
+.addTaskButton {
+    background-color: var(--primaryColor);
+    border-radius: 5rem;
+    border:none;
+    color:white;
+    font-size: 2rem;
+    font-weight: 900;
+    text-align: center;
+    /* padding: 5rem; */
+    height:3.5rem;
+    width:3.5rem;
+    /* margin: 90% 5% 5% auto; */
+    position: fixed;
+    bottom:5%;
+    right:3vmin;
+    /* vertical-align: middle; */
+    /* margin:auto; */
 }
 
 .footerContainer {
