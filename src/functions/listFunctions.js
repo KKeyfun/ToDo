@@ -1,14 +1,38 @@
 import makeElement from './makeElement';
 import append from './append';
+import { generateId, checkIfIdExists } from './idFunctions';
 
 let lists = [];
 let activeList = null;
 let addingList = false;
 
-function createList(listName) {
-  const tasks = [];
-  return { listName, tasks };
-  // should be pushed to a global lists array
+function createList(listName) { // Create List Object
+  let tasks = [];
+  let id = generateId();
+
+  while (checkIfIdExists(lists, id)) {
+    id = generateId();
+  }
+
+  const addTaskToList = (task) => {
+    // call task function
+    tasks.push(task);
+  };
+
+  const removeTaskFromList = (task) => {
+    tasks = tasks.filter((elem) => elem.id !== task.id);
+    // todo - create ids for tasks
+  };
+
+  const toggleActive = (list) => {
+    list.classList.toggle('active'); // old list
+    // list.classList.remove('active');
+    // list.classList.add('active'); // new active list
+  };
+
+  return {
+    listName, tasks, id, addTaskToList, removeTaskFromList,
+  };
 }
 
 function modifyListName(list) {
@@ -35,16 +59,22 @@ function modifyListName(list) {
 }
 
 function deleteList(list) {
-  lists = lists.filter((elem) => elem.listName !== list.children[1].textContent);
+  lists = lists.filter((elem) => elem.id !== list.children[1].getAttribute('data-id'));
 
   // TODO adjust task display if active list is deleted
   list.parentElement.removeChild(list);
+  toggleAddTaskButton();
 }
 
 // adds a new list with edit + delete buttons to the sidebar
 const addList = (listName, container) => {
   const listItem = makeElement('div', null, listName);
   lists.push(createList(listName));
+  // lists.push(createList(listName,container));// Creates a new list object with reference to its container in the sidebar
+  container.setAttribute('data-id', lists[lists.length - 1].id);
+  activeList = lists[lists.length - 1];
+  listItem.classList.add('active'); // todo - need to remove with the list swap fxn, need to remove previous active
+  // create toggle method
 
   const buttonOverlay = makeElement('div', 'buttonOverlay');
   const editButton = makeElement('button', 'editButton', 'edit');
@@ -62,9 +92,10 @@ const addList = (listName, container) => {
   append(buttonOverlay, [editButton, deleteButton]);
   append(container, [listItem, buttonOverlay]);
   activeList = lists[lists.length - 1];
+  toggleAddTaskButton();
 };
 
-function newList() { // Creates a text field to create a new list
+function newListInput() { // Creates a text field to create a new list
   if (!addingList) {
     addingList = true;
     const sidebar = document.querySelector('.sidebar');
@@ -80,7 +111,7 @@ function newList() { // Creates a text field to create a new list
 
     sidebar.insertBefore(sidebarItemContainer, document.querySelector('.addListButton'));
     saveListName.addEventListener('click', function add() {
-      addingList = false;
+      addingList = false; // to prevent duplicate new list input forms
       let lName = 'New List';
       if (listName.value) {
         lName = listName.value;
@@ -97,24 +128,13 @@ function newList() { // Creates a text field to create a new list
   }
 }
 
-// function createModal(){//needs access to lists, creates tasks
-//     const addTaskModal = makeElement('div', 'addTaskModal');
-//     const newForm = makeElement('form', 'newTaskForm');
-//     const listSelect = makeElement('select','listSelectDropdown');//when new list is created, add an option too this
+function toggleAddTaskButton() {
+  const addTask = document.querySelector('.addTaskButton');
+  if (lists.length) {
+    addTask.style.display = 'block';
+  } else {
+    addTask.style.display = 'none';
+  }
+}
 
-//     const newTaskHeader = makeElement('div', 'newTaskHeader', 'New Task');
-//     const newTaskName = makeElement('input');
-//     newTaskName.setAttribute('type', 'text');
-//     const newTaskDescription = makeElement('input');
-//     newTaskDescription.setAttribute('type', 'text');
-//     const newTaskPriority = makeElement('select');
-//     append(newTaskPriority, [makeElement('option', '', 'High'), makeElement('option', '', 'Moderate'), makeElement('option', '', 'Low')]);
-
-//     const editTaskModal = makeElement('div', 'editTaskModal');
-//     const modalContainer = document.querySelector('.modalContainer');
-//     const modalBg = document.querySelector('.modalBg');
-//     append(modalContainer, [addTaskModal, editTaskModal]);
-//     append(modalBg, modalContainer);
-// }
-
-export { newList, lists, activeList };
+export { newListInput, lists, activeList };

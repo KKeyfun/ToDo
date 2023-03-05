@@ -1,6 +1,6 @@
 import append from './append';
 import makeElement from './makeElement';
-import { newList } from './listFunctions';
+import { newListInput } from './listFunctions';
 import { display } from './displayController';
 
 function initialLoad() {
@@ -24,7 +24,7 @@ function initialLoad() {
   const sidebar = makeElement('ul', 'sidebar');
   const addListButton = makeElement('button', 'addListButton', '+');
 
-  addListButton.addEventListener('click', newList);
+  addListButton.addEventListener('click', newListInput);
 
   append(sidebar, addListButton);
   append(sidebarContainer, [sidebarHeader, sidebar]);
@@ -80,11 +80,11 @@ function createAddTaskModal() {
   const listItemC = makeElement('li');
   const listSelectLabel = makeElement('label', 'label', 'List: ');
   const listSelectDropdown = makeElement('select', 'listSelectDropdown');// dynamically add lists later
-  append(listItemC, [listSelectLabel, listSelectDropdown]);
+  append(listItemC, [listSelectLabel, listSelectDropdown]); // Use index from lists, ID might be hard
 
   const listItemD = makeElement('li');
   const newTaskDescriptionLabel = makeElement('label', 'label', 'Description: ');
-  const newTaskDescription = makeElement('textarea');// todo - should be textarea
+  const newTaskDescription = makeElement('textarea');
   newTaskDescription.setAttribute('rows', '3');
   //   newTaskDescription
   append(listItemD, [newTaskDescriptionLabel, newTaskDescription]);
@@ -92,7 +92,8 @@ function createAddTaskModal() {
   const listItemE = makeElement('li');
   const newTaskDueDateLabel = makeElement('label', 'label', 'Due Date: ');
   const newTaskDueDate = makeElement('input');// todo - calendar widget
-  //   newTaskDescription.setAttribute('type', 'text');
+  newTaskDueDate.setAttribute('type', 'date');
+  newTaskDueDate.setAttribute('min', '2023-01-01');
   append(listItemE, [newTaskDueDateLabel, newTaskDueDate]);
 
   const listItemF = makeElement('li');
@@ -103,6 +104,11 @@ function createAddTaskModal() {
 
   const listItemG = makeElement('li');
   const newTaskAddButton = makeElement('button', 'newTaskAddButton', 'Add Task');
+  newTaskAddButton.addEventListener('click', () => {
+  // call create list function
+    addTask();
+  });
+
   append(listItemG, newTaskAddButton);
 
   append(uList, [listItemA, listItemB, listItemC, listItemD, listItemE, listItemF, listItemG]);
@@ -138,6 +144,8 @@ function createEditTaskModal() {
   const listItemD = makeElement('li');
   const editDueDateLabel = makeElement('label', 'label', 'Due Date: ');
   const editDueDate = makeElement('input', 'editDueDate');// todo - calendar widget
+  editDueDate.setAttribute('type', 'date');// todo - dynamic value
+  editDueDate.setAttribute('min', '2023-01-01');
   append(listItemD, [editDueDateLabel, editDueDate]);
 
   const listItemE = makeElement('li');

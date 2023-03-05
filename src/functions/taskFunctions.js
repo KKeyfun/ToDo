@@ -1,11 +1,13 @@
 import makeElement from './makeElement';
 import append from './append';
-import { lists, activeList } from './listFunctions';
+// import { lists, activeList } from './listFunctions';
+import { generateId, checkIfIdExists } from './idFunctions';
 
 function createTask(task, description, dueDate, priority) {
-  const changeValue = (value, newValue) => {
-    // call displaycontroller for the form
-  };
+  // const changeValue = (value, newValue) => {
+  //   // call displaycontroller for the form
+  // };
+  // probably wont use
   return {
     task, description, dueDate, priority, changeValue,
   };
@@ -13,7 +15,7 @@ function createTask(task, description, dueDate, priority) {
 
 function addTask(list, task, taskDescription, priority, dueDate) {
   const newTask = createTask(task, taskDescription, priority, dueDate);
-  list.push(newTask);
+  list.tasks.push(newTask);
 
   const taskContainer = makeElement('li', 'taskContainer');
   const header = makeElement('div', 'taskHeader', task);
@@ -27,8 +29,8 @@ function addTask(list, task, taskDescription, priority, dueDate) {
 }
 
 function newTask() {
-  // should show the modal to do the thing
 //   if(everythingworks) {
 //     const newTask = createTask(task,description,duedate,priority);
 //   }
+  // grab values from the forms
 }
