@@ -34,3 +34,9 @@ function newTask() {
 //   }
   // grab values from the forms
 }
+function editTask(oldTask, editedTask) {
+  if (oldTask.list != editedTask.list) {
+    // should move to new list without changing the active list
+  }
+  // should also update the list display to reflect changes
+}

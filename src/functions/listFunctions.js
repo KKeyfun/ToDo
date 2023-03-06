@@ -1,12 +1,13 @@
 import makeElement from './makeElement';
 import append from './append';
 import { generateId, checkIfIdExists } from './idFunctions';
+import { changeActiveList } from './displayController';
 
-let lists = [];
+let lists = []; // lists and their sidebar containers
 let activeList = null;
 let addingList = false;
 
-function createList(listName) { // Create List Object
+function createList(listName, container) { // Create List Object
   let tasks = [];
   let id = generateId();
 
@@ -24,14 +25,13 @@ function createList(listName) { // Create List Object
     // todo - create ids for tasks
   };
 
-  const toggleActive = (list) => {
-    list.classList.toggle('active'); // old list
-    // list.classList.remove('active');
-    // list.classList.add('active'); // new active list
+  const toggleActive = () => {
+    container.classList.toggle('active'); // old list
+    // should be calling displaycontroller to show proper list of tasks
   };
 
   return {
-    listName, tasks, id, addTaskToList, removeTaskFromList,
+    listName, tasks, id, addTaskToList, removeTaskFromList, container, toggleActive,
   };
 }
 
@@ -69,12 +69,26 @@ function deleteList(list) {
 // adds a new list with edit + delete buttons to the sidebar
 const addList = (listName, container) => {
   const listItem = makeElement('div', null, listName);
-  lists.push(createList(listName));
-  // lists.push(createList(listName,container));// Creates a new list object with reference to its container in the sidebar
+  // lists.push(createList(listName));
+
+  container.addEventListener('click', () => {
+    event.stopPropagation();
+    activeList.toggleActive();
+    // activeList = lists.map((elem) => elem.id).indexOf(this.getAttribute('data-id'));
+    activeList.toggleActive();
+    changeActiveList();
+  });
+  lists.push(createList(listName, container));// Creates a new list object with reference to its container in the sidebar
   container.setAttribute('data-id', lists[lists.length - 1].id);
-  activeList = lists[lists.length - 1];
-  listItem.classList.add('active'); // todo - need to remove with the list swap fxn, need to remove previous active
-  // create toggle method
+
+  if (lists.length > 1) { // ensure at least 1 list exists
+    activeList.toggleActive(); // removes 'active' class from previously active list
+  }
+  // todo - also need to set first list to active if deleting active list
+  activeList = lists[lists.length - 1];// maybe use id instead, right now is the entire list object, though constant lookup is bad
+  activeList.toggleActive();
+  // todo - need to remove with the list swap fxn, need to remove previous active
+  // move to displaycontroller, changeActiveList(list,container)
 
   const buttonOverlay = makeElement('div', 'buttonOverlay');
   const editButton = makeElement('button', 'editButton', 'edit');
@@ -88,7 +102,7 @@ const addList = (listName, container) => {
   deleteButton.addEventListener('click', () => {
     deleteList(container);
   });
-
+  // todo - add a remaining tasks counter
   append(buttonOverlay, [editButton, deleteButton]);
   append(container, [listItem, buttonOverlay]);
   activeList = lists[lists.length - 1];
@@ -101,7 +115,6 @@ function newListInput() { // Creates a text field to create a new list
     const sidebar = document.querySelector('.sidebar');
     const sidebarItemContainer = makeElement('li', 'sidebarItemContainer');
 
-    // add functionality
     const listNameContainer = makeElement('div', 'listNameContainer');
     const listName = makeElement('input', 'listNameField');
     listName.setAttribute('type', 'text');
@@ -125,6 +138,7 @@ function newListInput() { // Creates a text field to create a new list
       saveListName.removeEventListener('click', add);
       saveListName.addEventListener('click', () => { modifyListName(sidebarItemContainer); });
     });
+    listName.focus();
   }
 }
 

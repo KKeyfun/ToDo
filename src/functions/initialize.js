@@ -79,14 +79,13 @@ function createAddTaskModal() {
 
   const listItemC = makeElement('li');
   const listSelectLabel = makeElement('label', 'label', 'List: ');
-  const listSelectDropdown = makeElement('select', 'listSelectDropdown');// dynamically add lists later
-  append(listItemC, [listSelectLabel, listSelectDropdown]); // Use index from lists, ID might be hard
+  const listSelectDropdown = makeElement('select', 'listSelectDropdown');
+  append(listItemC, [listSelectLabel, listSelectDropdown]);
 
   const listItemD = makeElement('li');
   const newTaskDescriptionLabel = makeElement('label', 'label', 'Description: ');
   const newTaskDescription = makeElement('textarea');
   newTaskDescription.setAttribute('rows', '3');
-  //   newTaskDescription
   append(listItemD, [newTaskDescriptionLabel, newTaskDescription]);
 
   const listItemE = makeElement('li');
@@ -120,13 +119,13 @@ function createAddTaskModal() {
 
 function createEditTaskModal() {
   // todo - all buttons need override
-  const editTaskModal = makeElement('div', 'editTaskModal');// may need a wrapper
+  const editTaskModal = makeElement('div', 'editTaskModal');
   const editTaskForm = makeElement('form', 'editTaskForm');
 
   const uList = makeElement('ul');
 
   const listItemA = makeElement('li');
-  const editTaskHeader = makeElement('div', ['header', 'editTaskHeader'], 'Edit Task');
+  const editTaskHeader = makeElement('div', ['header', 'editTaskHeader'], 'Edit Task');// todo - decide on allowing tasks to be moved from one list to another
   const deleteTaskButton = makeElement('button', 'modalCornerButton', 'Delete Task');// todo - garbage bin icon
   append(listItemA, [editTaskHeader, deleteTaskButton]);
 
