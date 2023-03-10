@@ -12,10 +12,16 @@
     text-decoration: none;
 }
 
+*,*:before,*:after {
+    box-sizing: border-box;
+}
+
 :root {
     --primaryColor:#d65e78;
     --lightColor:#ff8fa7;
     --darkColor:#a12d4c;
+    --lowPriority:rgb(30, 226, 30);
+    --moderatePriority:rgb(255, 238, 0);
 }
 
 body {
@@ -30,13 +36,8 @@ body {
     font-weight: 900;
 }
 
-.sidebar input {
-    /* z-index: 1; */
-}
-
 .modalBg {
     display: none;
-    /* display: flex; */
     justify-content: center;
     align-items: center;
     background-color: rgba(0,0,0,.6);
@@ -47,11 +48,9 @@ body {
     height: 100dvh;
     width: 100vw;
     width: 100dvw;
-
 }
 
 .modalContainer {
-    /* display: none; */
     display: flex;
     background-color: white;
     border-radius: 1em;
@@ -63,30 +62,22 @@ li input,li textarea{
     width: 100%;
 }
 
-li:last-child {
+.addTaskModal li:last-child, .editTaskModal li:last-child {
     margin: 0 auto;
 }
 
-li:last-child button {
+li:last-child>button {
     padding: .25em .75em;
     margin: .5em;
 }
 
 .newTaskHeader,.editTaskHeader {
     font-size: 1.3rem;
-    /* padding: .25em 0; */
 }
 
-.addTaskModal,.editTaskModal {
+.addTaskModal,.editTaskModal,.infoPanelContainer {
     display: none;
 }
-
-/* .newTaskCancelButton {
-    position: absolute;
-    top:1.5em;
-    right: 2em;
-    padding: .2em .5em;
-} */
 
 .modalCornerButton {
     position: absolute;
@@ -150,15 +141,34 @@ li:last-child button {
 .sidebarItemContainer {
     display: flex;
     align-items: center;
-    gap: .25em;
+    justify-content: space-between;
 
-    text-align: left;
+    min-height: 2.65rem;
     position: relative;
+    text-align: left;
+}
+
+.sidebarItemContainer div {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none;
 }
 
 .sidebarItemContainer div:first-child{
     max-width: max(80px,90%);
     word-wrap: break-word;
+}
+
+.sidebarItemContainer.active {
+    background-color: var(--darkColor);
+    color: white;
+    text-decoration: underline;
+}
+
+.saveButton>img{
+    height: 90%;
+    position:relative;
+    top:5%;
 }
 
 .listNameContainer {
@@ -167,12 +177,11 @@ li:last-child button {
     gap: .25em;
 
     position: absolute;
-    top:.3rem;
     z-index: 2;
 }
 
-.listNameField {
-    /* max-width: 82%; */
+.taskButtonContainer {
+    display: flex;
 }
 
 .sidebarItemContainer .buttonOverlay {
@@ -189,7 +198,7 @@ li:last-child button {
     visibility: visible;
 }
 
-.sidebar button {
+.sidebar button,.taskButtonContainer button{
     width: 2em;
     min-width: 2em;
     height: 2em;
@@ -204,57 +213,179 @@ li:last-child button {
     height: 1.5em;
     width: 5em;
     margin-top: .7em;
+    margin-bottom: 1.25em;
 }
 
 .addListButton:hover {
     border: 1px solid white;
 }
 
-.sidebar .editButton {
-    /* position: absolute; */
+.sidebar .editButton,.editTaskButton {
+    background-color: rgb(113, 255, 100);
 }
 
-.sidebar .deleteButton {
-    /* position: absolute;
-    left: calc(100% - 2em); */
+.sidebar .deleteButton,.deleteTaskButton {
     margin-left: .3em;
+    background-color: rgb(255, 78, 78);
+}
+
+.buttonOverlay button,.taskButtonContainer button {
+    border: none;
+    border-radius: 20%;
+}
+
+.deleteButton>img,.deleteTaskButton>img{
+    position: relative;
+    top: 7%;
+    height: 80%;
+}
+
+.tasklistContainer {
+    margin: 1em;
+    height: 100%;
+    width: 100%;
 }
 
 .contentContainer {
-    display:grid;
-    /* grid-template-rows: 3rem; */
-    grid-auto-rows: 2rem;
-}
-
-.content {
-    /* background-color: var(--primaryColor); */
+    display:flex;
 }
 
 .contentHeader {
-    /* display: flex; */
+    display: none;
+    background-color: var(--darkColor);
+    color: white;
+    font-size: 1.25rem;
+    padding: 1em 2em;
 }
 
 .checklistContainer {
     background-color: white;
 }
 
+.checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.taskContainer {
+    display: flex;
+    gap:.5em;
+    align-items: center;
+    background-color: var(--lightColor);
+    font-size: 1.1rem;
+    padding: .5em;
+}
+
+.taskContainer:nth-child(even){
+    background-color: var(--primaryColor);
+}
+
+.taskContainer.checked {
+    background-color: gray;
+    text-decoration: 2px line-through;
+}
+
+.taskContainer.low {
+    border-left: 4px solid var(--lowPriority);
+}
+
+.taskContainer.moderate {
+    border-left: 4px solid var(--moderatePriority);
+}
+
+.taskContainer.high {
+    border-left: 4px solid red;
+}
+
+.taskContainer input {
+    height: 1.5em;
+    width: 1.5em;
+}
+
+.taskName {
+    max-width: min(65%,350px);
+    word-wrap: anywhere;
+}
+
+.taskButtonContainer>button {
+    margin: 0 .15rem;
+}
+
+.taskDueDate {
+    font-size: .75rem;
+    margin-left: auto;
+}
+
 .addTaskButton {
+    display: none;
     background-color: var(--primaryColor);
     border-radius: 5rem;
     border:none;
     color:white;
+    height:3.5rem;
+    width:3.5rem;
+
     font-size: 2rem;
     font-weight: 900;
     text-align: center;
-    /* padding: 5rem; */
-    height:3.5rem;
-    width:3.5rem;
-    /* margin: 90% 5% 5% auto; */
+
+
     position: fixed;
     bottom:5%;
     right:3vmin;
-    /* vertical-align: middle; */
-    /* margin:auto; */
+}
+
+.infoPanelContainer {
+    display: none;
+    background-color: var(--lightColor);
+    margin: 1em;
+    min-height: 30%;
+    position: relative;
+    height: max-content;
+    width: 35%;
+}
+
+.infoPanelHeader {
+    background-color: var(--darkColor);
+    color: white;
+    font-size: 1.1rem;
+    padding: 1em 2em;
+    min-height: 3.1rem;
+    width: 100%;
+}
+
+.infoPanelHeader.low {
+    border-bottom: 4px solid var(--lowPriority);
+}
+
+.infoPanelHeader.moderate {
+    border-bottom: 4px solid var(--moderatePriority);
+}
+
+.infoPanelHeader.high {
+    border-bottom: 4px solid red;
+}
+
+.infoPanelBody {
+    padding: 1em;
+    word-wrap: break-word;
+}
+
+.infoPanelFooter {
+    position: absolute;
+    bottom: 0;
+
+    background-color: var(--primaryColor);
+    width: 100%;
+}
+
+.infoPanelDueDate {
+    text-align: right;
+}
+
+textarea {
+    resize: none;
 }
 
 .footerContainer {

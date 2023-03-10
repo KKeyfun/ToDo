@@ -1,33 +1,30 @@
 import makeElement from './makeElement';
 import append from './append';
-import { generateId, checkIfIdExists } from './idFunctions';
+import generateId from './idFunctions';
 import { changeActiveList } from './displayController';
+import getAsset from './assets';
 
 let lists = []; // lists and their sidebar containers
 let activeList = null;
 let addingList = false;
 
 function createList(listName, container) { // Create List Object
-  let tasks = [];
-  let id = generateId();
+  const tasks = [];
+  const id = generateId(lists);
 
-  while (checkIfIdExists(lists, id)) {
-    id = generateId();
-  }
-
-  const addTaskToList = (task) => {
-    // call task function
-    tasks.push(task);
+  const addTaskToList = function (task) {
+    this.tasks.push(task);
+    if (activeList.id === id) { // If adding task to active list, update the display
+      changeActiveList(activeList);
+    }
   };
 
-  const removeTaskFromList = (task) => {
-    tasks = tasks.filter((elem) => elem.id !== task.id);
-    // todo - create ids for tasks
+  const removeTaskFromList = function (taskId) {
+    this.tasks = this.tasks.filter((task) => task.id !== taskId);
   };
 
   const toggleActive = () => {
-    container.classList.toggle('active'); // old list
-    // should be calling displaycontroller to show proper list of tasks
+    container.classList.toggle('active');
   };
 
   return {
@@ -37,70 +34,87 @@ function createList(listName, container) { // Create List Object
 
 function modifyListName(list) {
   const listName = list.children[0].children[0].value;
-  // should hide the original stuff
-  // list.children[1].style.display = 'none';
-  // list.children[2].style.display = 'none';
-
-  // hide the text field then redisplay the rest
-  const previousValue = list.children[1].textContent;
   list.children[1].textContent = listName;
   list.children[1].style.display = 'block';
   list.children[2].style.display = 'flex';
   list.children[0].style.display = 'none';
 
-  // let textField = list.children[0];
-  // textField.style.display = 'flex';
-  // let temp = lists.filter(elem => elem.name !== list.textContent);
-  // finds list in the list array to edit the name
-  // temp[0].taskName = listName;
-  const index = lists.findIndex((elem) => elem.listName === previousValue);
+  const index = lists.map((elem) => elem.id).indexOf(+list.getAttribute('data-id'));
   lists[index].listName = listName;
-  // change to a text field
+  if (list === activeList.container) {
+    changeActiveList(activeList);
+  }
 }
 
-function deleteList(list) {
-  lists = lists.filter((elem) => elem.id !== list.children[1].getAttribute('data-id'));
+function deleteList(list, event) {
+  lists = lists.filter((elem) => elem.container !== list);
 
-  // TODO adjust task display if active list is deleted
+  event.stopPropagation();
   list.parentElement.removeChild(list);
   toggleAddTaskButton();
+
+  if (list === activeList.container && lists.length > 0) {
+    activeList = lists[0];
+    activeList.toggleActive();
+    changeActiveList(activeList, true);
+  } else if (lists.length === 1) {
+    activeList = null;
+    document.querySelector('.contentContainer').style.display = 'none';
+  }
 }
 
 // adds a new list with edit + delete buttons to the sidebar
 const addList = (listName, container) => {
   const listItem = makeElement('div', null, listName);
-  // lists.push(createList(listName));
 
   container.addEventListener('click', () => {
-    event.stopPropagation();
-    activeList.toggleActive();
-    // activeList = lists.map((elem) => elem.id).indexOf(this.getAttribute('data-id'));
-    activeList.toggleActive();
-    changeActiveList();
+    if (container !== activeList.container) {
+      activeList.toggleActive();
+      activeList = lists[lists.map((elem) => elem.container).indexOf(container)];
+      activeList.toggleActive();
+      changeActiveList(activeList, true);
+    }
   });
   lists.push(createList(listName, container));// Creates a new list object with reference to its container in the sidebar
   container.setAttribute('data-id', lists[lists.length - 1].id);
 
-  if (lists.length > 1) { // ensure at least 1 list exists
+  if (lists.length > 1) {
     activeList.toggleActive(); // removes 'active' class from previously active list
   }
-  // todo - also need to set first list to active if deleting active list
-  activeList = lists[lists.length - 1];// maybe use id instead, right now is the entire list object, though constant lookup is bad
+
+  activeList = lists[lists.length - 1];
   activeList.toggleActive();
+  if (lists.length > 0) {
+    document.querySelector('.contentHeader').style.display = 'block';
+  }
+  changeActiveList(activeList, true);
   // todo - need to remove with the list swap fxn, need to remove previous active
   // move to displaycontroller, changeActiveList(list,container)
 
   const buttonOverlay = makeElement('div', 'buttonOverlay');
-  const editButton = makeElement('button', 'editButton', 'edit');
-  const deleteButton = makeElement('button', 'deleteButton', 'del');
+  const editButton = makeElement('button', 'editButton');
+  // testing
+  // const editImg = makeElement('img');
+  // editImg.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNOSAxM3Y2YzAgLjU1Mi0uNDQ4IDEtMSAxcy0xLS40NDgtMS0xdi02YzAtLjU1Mi40NDgtMSAxLTFzMSAuNDQ4IDEgMXptNy0xYy0uNTUyIDAtMSAuNDQ4LTEgMXY2YzAgLjU1Mi40NDggMSAxIDFzMS0uNDQ4IDEtMXYtNmMwLS41NTItLjQ0OC0xLTEtMXptLTQgMGMtLjU1MiAwLTEgLjQ0OC0xIDF2NmMwIC41NTIuNDQ4IDEgMSAxczEtLjQ0OCAxLTF2LTZjMC0uNTUyLS40NDgtMS0xLTF6bTQuMzMzLTguNjIzYy0uODgyLS4xODQtMS4zNzMtMS40MDktMS4xODktMi4yOTFsLTUuMjAzLTEuMDg2Yy0uMTg0Ljg4My0xLjEyMyAxLjgxLTIuMDA0IDEuNjI1bC01LjUyOC0xLjA5OS0uNDA5IDEuOTU4IDE5LjU5MSA0LjA5OS40MDktMS45NTgtNS42NjctMS4yNDh6bTQuNjY3IDQuNjIzdjE2aC0xOHYtMTZoMTh6bS0yIDE0di0xMmgtMTR2MTJoMTR6Ii8+PC9zdmc+';
+  append(editButton, getAsset('edit'));
+  // testiong
+  const deleteButton = makeElement('button', 'deleteButton');
+  // testing
+  append(deleteButton, getAsset('delete'));
+  // testing
 
-  editButton.addEventListener('click', () => { // shows text field to edit list name, hides label and save/delete buttons
+  editButton.addEventListener('click', (event) => { // shows text field to edit list name, hides label and save/delete buttons
+    event.stopPropagation(); // todo - need to fix for the save button
     buttonOverlay.style.display = 'none';
     listItem.style.display = 'none';
     container.children[0].style.display = 'flex';
+    container.firstChild.firstChild.focus(); // maybe replace all children[0] with firstchild?
   });
-  deleteButton.addEventListener('click', () => {
-    deleteList(container);
+  deleteButton.addEventListener('click', (event) => {
+    deleteList(container, event);
+    if (lists.length === 0) {
+      document.querySelector('.contentHeader').style.display = 'none';
+    }
   });
   // todo - add a remaining tasks counter
   append(buttonOverlay, [editButton, deleteButton]);
@@ -119,6 +133,9 @@ function newListInput() { // Creates a text field to create a new list
     const listName = makeElement('input', 'listNameField');
     listName.setAttribute('type', 'text');
     const saveListName = makeElement('button', 'saveButton');
+    // testing
+    append(saveListName, getAsset('save'));
+    // testing
     append(listNameContainer, [listName, saveListName]);
     append(sidebarItemContainer, listNameContainer);
 
@@ -128,7 +145,17 @@ function newListInput() { // Creates a text field to create a new list
       let lName = 'New List';
       if (listName.value) {
         lName = listName.value;
+      } else {
+        listName.value = lName;
       }
+
+      // // testing
+      // const taskListContainer = makeElement('div','taskListContainer');
+      // const taskList = makeElement('ul','taskList');
+      // append(taskListContainer,taskList);
+      // // add reference to the list object task
+      // // testing
+
       addList(lName, sidebarItemContainer);
       console.log(lists);
       listNameContainer.style.display = 'none';
@@ -136,7 +163,9 @@ function newListInput() { // Creates a text field to create a new list
       // saveListName.style.display = 'none';
       // console.log(sidebarItemContainer)
       saveListName.removeEventListener('click', add);
-      saveListName.addEventListener('click', () => { modifyListName(sidebarItemContainer); });
+      saveListName.addEventListener('click', () => {
+        modifyListName(sidebarItemContainer);
+      });
     });
     listName.focus();
   }

@@ -1,13 +1,22 @@
 import append from './append';
 import makeElement from './makeElement';
-import { newListInput } from './listFunctions';
-import { display } from './displayController';
+import { newListInput, lists, activeList } from './listFunctions';
+import { closeModal, display } from './displayController';
+import { addTask, editTask } from './taskFunctions';
 
 function initialLoad() {
-  // todo - finish functionality
   const modalBg = makeElement('div', 'modalBg');
-  // todo - stop propogation when hiding modal and bg
+  modalBg.addEventListener('click', () => {
+    if (document.querySelector('.modalContainer').firstChild.style.display === 'flex') {
+      closeModal(document.querySelector('.newTaskForm'));
+    } else {
+      closeModal(document.querySelector('.editTaskForm'));
+    }
+  });
   const modalContainer = makeElement('div', 'modalContainer');
+  modalContainer.addEventListener('click', (event) => {
+    event.stopPropagation();
+  });
 
   const addModal = createAddTaskModal();
   const editModal = createEditTaskModal();
@@ -31,19 +40,24 @@ function initialLoad() {
 
   const contentContainer = makeElement('div', 'contentContainer');
 
-  const contentHeader = makeElement('div', ['header', 'contentHeader'], 'LIST NAME HERE');// todo - change name to current list's name
+  const tasklistContainer = makeElement('div', 'tasklistContainer');
+  const contentHeader = makeElement('div', ['header', 'contentHeader']);
 
   const content = makeElement('div', 'content');
   const checklistContainer = makeElement('div', 'checklistContainer');
   const checklist = makeElement('ol', 'checklist');
 
+  const infoPanel = createInfoPanel();
+
   const newTaskButton = makeElement('button', 'addTaskButton', '+');
-  newTaskButton.addEventListener('click', () => { display('add'); });
+  newTaskButton.addEventListener('click', () => {
+    display('add', lists, activeList);
+  });
 
   append(checklistContainer, checklist);
   append(content, checklistContainer);
-  append(contentContainer, [contentHeader, content, newTaskButton]);
-  // checklistitems
+  append(tasklistContainer, [contentHeader, content, newTaskButton]);
+  append(contentContainer, [tasklistContainer, infoPanel]);
 
   const footerContainer = makeElement('div', 'footerContainer');
   const url = makeElement('a', '', 'Github');// todo - fix after finding new icon
@@ -64,15 +78,15 @@ function createAddTaskModal() {
 
   const listItemA = makeElement('li');
   const newTaskHeader = makeElement('div', ['header', 'newTaskHeader'], 'New Task');
-  //   const newTaskCancelButton = makeElement('button', 'newTaskCancelButton', 'Cancel');
   const newTaskCancelButton = makeElement('button', 'modalCornerButton', 'Cancel');
-  newTaskCancelButton.addEventListener('click', () => {
-    closeModal();// import from displaycontroller
+  newTaskCancelButton.addEventListener('click', (event) => {
+    event.preventDefault();
+    closeModal(newTaskForm);
   });
   append(listItemA, [newTaskHeader, newTaskCancelButton]);
 
   const listItemB = makeElement('li');
-  const newTaskName = makeElement('input');
+  const newTaskName = makeElement('input', 'newTaskName');
   newTaskName.setAttribute('type', 'text');
   const newTaskNameLabel = makeElement('label', 'label', 'Task Name: ');
   append(listItemB, [newTaskNameLabel, newTaskName]);
@@ -84,27 +98,27 @@ function createAddTaskModal() {
 
   const listItemD = makeElement('li');
   const newTaskDescriptionLabel = makeElement('label', 'label', 'Description: ');
-  const newTaskDescription = makeElement('textarea');
+  const newTaskDescription = makeElement('textarea', 'newTaskDescription');
   newTaskDescription.setAttribute('rows', '3');
   append(listItemD, [newTaskDescriptionLabel, newTaskDescription]);
 
   const listItemE = makeElement('li');
   const newTaskDueDateLabel = makeElement('label', 'label', 'Due Date: ');
-  const newTaskDueDate = makeElement('input');// todo - calendar widget
+  const newTaskDueDate = makeElement('input', 'newTaskDueDate');
   newTaskDueDate.setAttribute('type', 'date');
   newTaskDueDate.setAttribute('min', '2023-01-01');
   append(listItemE, [newTaskDueDateLabel, newTaskDueDate]);
 
   const listItemF = makeElement('li');
   const newTaskPriorityLabel = makeElement('label', 'label', 'Task Priority: ');
-  const newTaskPriority = makeElement('select');
+  const newTaskPriority = makeElement('select', 'newTaskPriority');
   append(newTaskPriority, [makeElement('option', '', 'Low'), makeElement('option', '', 'Moderate'), makeElement('option', '', 'High')]);
   append(listItemF, [newTaskPriorityLabel, newTaskPriority]);
 
   const listItemG = makeElement('li');
   const newTaskAddButton = makeElement('button', 'newTaskAddButton', 'Add Task');
-  newTaskAddButton.addEventListener('click', () => {
-  // call create list function
+  newTaskAddButton.addEventListener('click', (event) => {
+    event.preventDefault();
     addTask();
   });
 
@@ -118,45 +132,52 @@ function createAddTaskModal() {
 }
 
 function createEditTaskModal() {
-  // todo - all buttons need override
   const editTaskModal = makeElement('div', 'editTaskModal');
   const editTaskForm = makeElement('form', 'editTaskForm');
 
   const uList = makeElement('ul');
 
   const listItemA = makeElement('li');
-  const editTaskHeader = makeElement('div', ['header', 'editTaskHeader'], 'Edit Task');// todo - decide on allowing tasks to be moved from one list to another
-  const deleteTaskButton = makeElement('button', 'modalCornerButton', 'Delete Task');// todo - garbage bin icon
-  append(listItemA, [editTaskHeader, deleteTaskButton]);
+  const editTaskHeader = makeElement('div', ['header', 'editTaskHeader'], 'Edit Task');
+  append(listItemA, editTaskHeader);
 
-  // TODO, this needs to go into task list
   const listItemB = makeElement('li');
   const editTaskTitleLabel = makeElement('label', 'label', 'Task Title: ');
-  const editTaskTitle = makeElement('input', 'editTaskTitle');// todo - needs to know which task it's editing, this might need to go into the task functions
+  const editTaskTitle = makeElement('input', 'editTaskTitle');
   append(listItemB, [editTaskTitleLabel, editTaskTitle]);
 
   const listItemC = makeElement('li');
   const editTaskDescriptionLabel = makeElement('label', 'label', 'Task Description: ');
-  const editTaskDescription = makeElement('input', 'editTaskDescription');
+  const editTaskDescription = makeElement('textarea', 'editTaskDescription');
+  editTaskDescription.setAttribute('rows', '3');
   append(listItemC, [editTaskDescriptionLabel, editTaskDescription]);
 
   const listItemD = makeElement('li');
   const editDueDateLabel = makeElement('label', 'label', 'Due Date: ');
-  const editDueDate = makeElement('input', 'editDueDate');// todo - calendar widget
-  editDueDate.setAttribute('type', 'date');// todo - dynamic value
+  const editDueDate = makeElement('input', 'editDueDate');
+  editDueDate.setAttribute('type', 'date');
   editDueDate.setAttribute('min', '2023-01-01');
   append(listItemD, [editDueDateLabel, editDueDate]);
 
   const listItemE = makeElement('li');
   const editPriorityLabel = makeElement('label', 'label', 'Priority: ');
-  const editPriority = makeElement('select');
+  const editPriority = makeElement('select', 'editPriority');
   append(editPriority, [makeElement('option', '', 'Low'), makeElement('option', '', 'Moderate'), makeElement('option', '', 'High')]);
-  // todo - change default value
   append(listItemE, [editPriorityLabel, editPriority]);
 
   const listItemF = makeElement('li');
   const saveEdit = makeElement('button', 'saveEdit', 'Save Changes');// todo - Save icon
+
+  saveEdit.addEventListener('click', (event) => {
+    event.preventDefault();
+    editTask();
+    closeModal(editTaskForm);
+  });
   const cancelEdit = makeElement('button', 'cancelEdit', 'Cancel');
+  cancelEdit.addEventListener('click', (event) => {
+    event.preventDefault();
+    closeModal(editTaskForm);
+  });
   append(listItemF, [saveEdit, cancelEdit]);
 
   append(uList, [listItemA, listItemB, listItemC, listItemD, listItemE, listItemF]);
@@ -166,8 +187,19 @@ function createEditTaskModal() {
   return editTaskModal;
 }
 
-function createInfoModal() {
+function createInfoPanel() {
+  const infoPanelContainer = makeElement('div', 'infoPanelContainer');
+  const infoPanel = makeElement('div', 'infoPanel');
+  const infoPanelHeader = makeElement('div', ['header', 'infoPanelHeader']);
+  const infoPanelBody = makeElement('div', 'infoPanelBody');
+  const infoPanelFooter = makeElement('div', 'infoPanelFooter');
+  const infoPanelDueDate = makeElement('div', 'infoPanelDueDate');
 
+  append(infoPanelFooter, infoPanelDueDate);
+  append(infoPanel, [infoPanelHeader, infoPanelBody, infoPanelFooter]);
+  append(infoPanelContainer, infoPanel);
+
+  return infoPanelContainer;
 }
 
 export default initialLoad;
