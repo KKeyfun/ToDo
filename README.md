@@ -2,6 +2,8 @@
 
 A simple to-do page
 
+Check it out here: https://kkeyfun.github.io/ToDo/
+
 ## Built using
 - HTML
 - Vanilla JavaScript
