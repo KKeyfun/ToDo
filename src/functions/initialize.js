@@ -3,6 +3,7 @@ import makeElement from './makeElement';
 import { newListInput, lists, activeList } from './listFunctions';
 import { closeModal, display } from './displayController';
 import { addTask, editTask } from './taskFunctions';
+import getAsset from './assets';
 
 function initialLoad() {
   const modalBg = makeElement('div', 'modalBg');
@@ -60,13 +61,10 @@ function initialLoad() {
   append(contentContainer, [tasklistContainer, infoPanel]);
 
   const footerContainer = makeElement('div', 'footerContainer');
-  const url = makeElement('a', '', 'Github');// todo - fix after finding new icon
-  url.href = '';// todo - get github icon from different source
-  const image = makeElement('img', 'githubUrl');
-  const footer = makeElement('a', 'footer');
+  const footer = makeElement('a', 'footer', 'Kkeyfun');
   footer.href = 'https:github.com/KKeyfun';
-  append(footer, image);
-  append(footerContainer, [footer, url]);
+  append(footer, getAsset('github'));
+  append(footerContainer, footer);
   append(document.querySelector('body'), [modalBg, headerContainer, sidebarContainer, contentContainer, footerContainer]);
 }
 
@@ -78,7 +76,8 @@ function createAddTaskModal() {
 
   const listItemA = makeElement('li');
   const newTaskHeader = makeElement('div', ['header', 'newTaskHeader'], 'New Task');
-  const newTaskCancelButton = makeElement('button', 'modalCornerButton', 'Cancel');
+  const newTaskCancelButton = makeElement('button', 'modalCornerButton');
+  append(newTaskCancelButton, getAsset('cancel'));
   newTaskCancelButton.addEventListener('click', (event) => {
     event.preventDefault();
     closeModal(newTaskForm);
@@ -88,6 +87,7 @@ function createAddTaskModal() {
   const listItemB = makeElement('li');
   const newTaskName = makeElement('input', 'newTaskName');
   newTaskName.setAttribute('type', 'text');
+  newTaskName.required = true;
   const newTaskNameLabel = makeElement('label', 'label', 'Task Name: ');
   append(listItemB, [newTaskNameLabel, newTaskName]);
 
@@ -119,7 +119,12 @@ function createAddTaskModal() {
   const newTaskAddButton = makeElement('button', 'newTaskAddButton', 'Add Task');
   newTaskAddButton.addEventListener('click', (event) => {
     event.preventDefault();
-    addTask();
+    if (newTaskName.checkValidity()) {
+      newTaskName.style.border = '';
+      addTask();
+    } else {
+      newTaskName.style.border = '2px solid red';
+    }
   });
 
   append(listItemG, newTaskAddButton);
@@ -144,6 +149,7 @@ function createEditTaskModal() {
   const listItemB = makeElement('li');
   const editTaskTitleLabel = makeElement('label', 'label', 'Task Title: ');
   const editTaskTitle = makeElement('input', 'editTaskTitle');
+  editTaskTitle.required = true;
   append(listItemB, [editTaskTitleLabel, editTaskTitle]);
 
   const listItemC = makeElement('li');
@@ -166,12 +172,17 @@ function createEditTaskModal() {
   append(listItemE, [editPriorityLabel, editPriority]);
 
   const listItemF = makeElement('li');
-  const saveEdit = makeElement('button', 'saveEdit', 'Save Changes');// todo - Save icon
+  const saveEdit = makeElement('button', 'saveEdit', 'Save Changes');
 
   saveEdit.addEventListener('click', (event) => {
     event.preventDefault();
-    editTask();
-    closeModal(editTaskForm);
+    if (editTaskTitle.checkValidity()) {
+      editTaskTitle.style.border = '';
+      editTask();
+      closeModal(editTaskForm);
+    } else {
+      editTaskTitle.style.border = '2px solid red';
+    }
   });
   const cancelEdit = makeElement('button', 'cancelEdit', 'Cancel');
   cancelEdit.addEventListener('click', (event) => {

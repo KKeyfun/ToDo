@@ -79,11 +79,17 @@ li:last-child>button {
     display: none;
 }
 
+
+
 .modalCornerButton {
+    display: flex;
     position: absolute;
     top:1.5em;
     right: 2em;
-    padding: .2em .5em;
+}
+
+.modalCornerButton>img {
+    width: 1.5rem;
 }
 
 .modalBg ul {
@@ -148,7 +154,11 @@ li:last-child>button {
     text-align: left;
 }
 
-.sidebarItemContainer div {
+.sidebarItemContainer:hover,.taskContainer {
+    cursor: pointer;
+}
+
+.sidebarItemContainer div,.taskName {
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none;
@@ -165,8 +175,14 @@ li:last-child>button {
     text-decoration: underline;
 }
 
+.saveButton {
+    background-color: rgb(113, 255, 100);
+    border: none;
+    border-radius: 20%;
+}
+
 .saveButton>img{
-    height: 90%;
+    height: 80%;
     position:relative;
     top:5%;
 }
@@ -216,7 +232,7 @@ li:last-child>button {
     margin-bottom: 1.25em;
 }
 
-.addListButton:hover {
+.addListButton:hover,.saveButton:hover,.editButton:hover,.deleteButton:hover,.editTaskButton:hover,.deleteTaskButton:hover {
     border: 1px solid white;
 }
 
@@ -391,11 +407,16 @@ textarea {
 .footerContainer {
     grid-column: 1/-1;
 
+    background-color: var(--darkColor);
     text-align: center;
 
-    background-color: var(--darkColor);
 }
 
 .footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap:.25em;
     color:white;
+    padding: .25em;
 }

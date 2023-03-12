@@ -1,7 +1,7 @@
 import makeElement from './makeElement';
 import append from './append';
 
-function display(form, lists, activeList) {
+function display(form, lists, activeList) { // displays respective modal
   document.querySelector('.modalBg').style.display = 'flex';
   if (form === 'add') {
     document.querySelector('.addTaskModal').style.display = 'flex';
@@ -46,12 +46,20 @@ function closeModal(form) {
 }
 
 function updateInfoPanel(task) {
-  document.querySelector('.infoPanelHeader').textContent = task.task;
+  const header = document.querySelector('.infoPanelHeader');
+  header.textContent = task.task;
+  const prevPrio = header.className.split(' ');
+  header.classList.remove(prevPrio[2]);
+  header.classList.add(task.priority.toLowerCase());
+
   document.querySelector('.infoPanelBody').textContent = task.description;
+  const due = document.querySelector('.infoPanelDueDate');
   if (task.dueDate) {
-    document.querySelector('.infoPanelDueDate').textContent = `Due ${task.dueDate}`;// make sure worky
+    due.textContent = `Due ${task.dueDate}`;
+    due.style.padding = '.25em';
   } else {
-    document.querySelector('.infoPanelDueDate').textContent = '';
+    due.textContent = '';
+    due.style.padding = '0';
   }
 }
 
@@ -60,6 +68,12 @@ function togglePanel(activeTask) {
   panel.style.display = activeTask ? 'block' : 'none';
 }
 
+function updateTaskCount(list) {
+  const taskCounter = document.querySelector(`li[data-id="${list.id}"] > .taskCount`);
+  const taskCount = list.tasks.reduce((acc, curr) => ((curr.completed) ? acc : acc + 1), 0);
+  taskCounter.textContent = (taskCount === 0) ? '' : taskCount;
+}
+
 export {
-  display, changeActiveList, closeModal, updateInfoPanel, togglePanel,
+  display, changeActiveList, closeModal, updateInfoPanel, togglePanel, updateTaskCount,
 };

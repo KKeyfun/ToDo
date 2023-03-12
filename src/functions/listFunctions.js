@@ -63,9 +63,9 @@ function deleteList(list, event) {
   }
 }
 
-// adds a new list with edit + delete buttons to the sidebar
-const addList = (listName, container) => {
+const addList = (listName, container) => { // adds a new list with edit + delete buttons to the sidebar
   const listItem = makeElement('div', null, listName);
+  const taskCount = makeElement('div', 'taskCount');
 
   container.addEventListener('click', () => {
     if (container !== activeList.container) {
@@ -82,43 +82,38 @@ const addList = (listName, container) => {
     activeList.toggleActive(); // removes 'active' class from previously active list
   }
 
-  activeList = lists[lists.length - 1];
+  activeList = lists[lists.length - 1];// changes activelist to the new list
   activeList.toggleActive();
-  if (lists.length > 0) {
+  if (lists.length > 0) { // displays tasklist header if at least 1 list exists
     document.querySelector('.contentHeader').style.display = 'block';
   }
   changeActiveList(activeList, true);
-  // todo - need to remove with the list swap fxn, need to remove previous active
-  // move to displaycontroller, changeActiveList(list,container)
 
   const buttonOverlay = makeElement('div', 'buttonOverlay');
   const editButton = makeElement('button', 'editButton');
-  // testing
-  // const editImg = makeElement('img');
-  // editImg.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNOSAxM3Y2YzAgLjU1Mi0uNDQ4IDEtMSAxcy0xLS40NDgtMS0xdi02YzAtLjU1Mi40NDgtMSAxLTFzMSAuNDQ4IDEgMXptNy0xYy0uNTUyIDAtMSAuNDQ4LTEgMXY2YzAgLjU1Mi40NDggMSAxIDFzMS0uNDQ4IDEtMXYtNmMwLS41NTItLjQ0OC0xLTEtMXptLTQgMGMtLjU1MiAwLTEgLjQ0OC0xIDF2NmMwIC41NTIuNDQ4IDEgMSAxczEtLjQ0OCAxLTF2LTZjMC0uNTUyLS40NDgtMS0xLTF6bTQuMzMzLTguNjIzYy0uODgyLS4xODQtMS4zNzMtMS40MDktMS4xODktMi4yOTFsLTUuMjAzLTEuMDg2Yy0uMTg0Ljg4My0xLjEyMyAxLjgxLTIuMDA0IDEuNjI1bC01LjUyOC0xLjA5OS0uNDA5IDEuOTU4IDE5LjU5MSA0LjA5OS40MDktMS45NTgtNS42NjctMS4yNDh6bTQuNjY3IDQuNjIzdjE2aC0xOHYtMTZoMTh6bS0yIDE0di0xMmgtMTR2MTJoMTR6Ii8+PC9zdmc+';
   append(editButton, getAsset('edit'));
-  // testiong
+
   const deleteButton = makeElement('button', 'deleteButton');
-  // testing
   append(deleteButton, getAsset('delete'));
-  // testing
 
   editButton.addEventListener('click', (event) => { // shows text field to edit list name, hides label and save/delete buttons
-    event.stopPropagation(); // todo - need to fix for the save button
+    event.stopPropagation();
     buttonOverlay.style.display = 'none';
     listItem.style.display = 'none';
+    taskCount.style.display = 'none';
     container.children[0].style.display = 'flex';
-    container.firstChild.firstChild.focus(); // maybe replace all children[0] with firstchild?
+    container.firstChild.firstChild.focus();
   });
+
   deleteButton.addEventListener('click', (event) => {
     deleteList(container, event);
     if (lists.length === 0) {
       document.querySelector('.contentHeader').style.display = 'none';
     }
   });
-  // todo - add a remaining tasks counter
+
   append(buttonOverlay, [editButton, deleteButton]);
-  append(container, [listItem, buttonOverlay]);
+  append(container, [listItem, taskCount, buttonOverlay]);
   activeList = lists[lists.length - 1];
   toggleAddTaskButton();
 };
@@ -132,10 +127,9 @@ function newListInput() { // Creates a text field to create a new list
     const listNameContainer = makeElement('div', 'listNameContainer');
     const listName = makeElement('input', 'listNameField');
     listName.setAttribute('type', 'text');
+
     const saveListName = makeElement('button', 'saveButton');
-    // testing
     append(saveListName, getAsset('save'));
-    // testing
     append(listNameContainer, [listName, saveListName]);
     append(sidebarItemContainer, listNameContainer);
 
@@ -149,19 +143,9 @@ function newListInput() { // Creates a text field to create a new list
         listName.value = lName;
       }
 
-      // // testing
-      // const taskListContainer = makeElement('div','taskListContainer');
-      // const taskList = makeElement('ul','taskList');
-      // append(taskListContainer,taskList);
-      // // add reference to the list object task
-      // // testing
-
       addList(lName, sidebarItemContainer);
-      console.log(lists);
+      // console.log(lists);
       listNameContainer.style.display = 'none';
-      // listName.style.display = 'none';
-      // saveListName.style.display = 'none';
-      // console.log(sidebarItemContainer)
       saveListName.removeEventListener('click', add);
       saveListName.addEventListener('click', () => {
         modifyListName(sidebarItemContainer);
