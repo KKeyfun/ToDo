@@ -62,7 +62,7 @@ function initialLoad() {
 
   const footerContainer = makeElement('div', 'footerContainer');
   const footer = makeElement('a', 'footer', 'Kkeyfun');
-  footer.href = 'https:github.com/KKeyfun';
+  footer.href = 'https://www.github.com/KKeyfun';
   append(footer, getAsset('github'));
   append(footerContainer, footer);
   append(document.querySelector('body'), [modalBg, headerContainer, sidebarContainer, contentContainer, footerContainer]);
