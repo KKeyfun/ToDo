@@ -71,6 +71,7 @@ function addTask() {
       task.completed = false;
     }
 
+    updateInfoPanel(activeTask);
     updateTaskCount(selectedList);
   });
 

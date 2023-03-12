@@ -47,7 +47,7 @@ function closeModal(form) {
 
 function updateInfoPanel(task) {
   const header = document.querySelector('.infoPanelHeader');
-  header.textContent = task.task;
+  header.textContent = (task.completed) ? `${task.task} ✅` : task.task;
   const prevPrio = header.className.split(' ');
   header.classList.remove(prevPrio[2]);
   header.classList.add(task.priority.toLowerCase());

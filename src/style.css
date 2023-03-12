@@ -171,6 +171,7 @@ li:last-child>button {
 
 .sidebarItemContainer.active {
     background-color: var(--darkColor);
+    box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
     color: white;
     text-decoration: underline;
 }
