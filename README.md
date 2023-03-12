@@ -7,3 +7,8 @@ A simple to-do page
 - Vanilla JavaScript
 - CSS
 - Webpack
+
+## Sources
+Icons from: https://iconmonstr.com/
+
+Inter Font: https://github.com/rsms/inter
