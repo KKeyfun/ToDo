@@ -140,16 +140,13 @@ li:last-child>button {
     text-align: center;
 }
 
-.sidebar li {
-    padding: .75em;
-}
-
 .sidebarItemContainer {
     display: flex;
     align-items: center;
     justify-content: space-between;
 
-    min-height: 2.65rem;
+    min-height: 3.25rem;
+    padding: .75em;
     position: relative;
     text-align: left;
 }
@@ -165,7 +162,6 @@ li:last-child>button {
 }
 
 .sidebarItemContainer div:first-child{
-    max-width: max(80px,90%);
     word-wrap: break-word;
 }
 
@@ -193,8 +189,7 @@ li:last-child>button {
     align-items: center;
     gap: .25em;
 
-    position: absolute;
-    z-index: 2;
+    width: 100%;
 }
 
 .taskButtonContainer {
